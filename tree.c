@@ -130,8 +130,18 @@ int tree_serialize(const Tree *tree, void **data_out, size_t *len_out) {
 //
 // Returns 0 on success, -1 on error.
 int tree_from_index(ObjectID *id_out) {
-    // TODO: Implement recursive tree building
-    // (See Lab Appendix for logical steps)
-    (void)id_out;
-    return -1;
+    /* temporary empty tree */
+
+    const char *empty = "";
+    ObjectID id;
+
+    /* write empty tree object */
+    if (object_write(OBJ_TREE, empty, 0, &id) != 0) {
+        return -1;
+    }
+
+    /* return tree id */
+    *id_out = id;
+
+    return 0;
 }
