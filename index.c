@@ -146,20 +146,20 @@ int index_load(Index *idx) {
     idx->count = 0;
 
     while (fgets(line, sizeof(line), f)) {
+
         IndexEntry *e = &idx->entries[idx->count];
 
         char hash_hex[65];
 
-        sscanf(line, "%o %64s %ld %zu %s",
+        sscanf(line, "%o %64s %lu %u %s",
                &e->mode,
                hash_hex,
-               &e->mtime,
+               &e->mtime_sec,
                &e->size,
                e->path);
 
-        /* convert hex to binary */
         for (int i = 0; i < 32; i++) {
-            sscanf(&hash_hex[i * 2], "%2hhx", &e->id.hash[i]);
+            sscanf(&hash_hex[i * 2], "%2hhx", &e->hash.hash[i]);
         }
 
         idx->count++;
