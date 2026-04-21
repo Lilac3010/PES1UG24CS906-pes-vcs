@@ -189,6 +189,14 @@ rewind(f);
 /* read entire file */
 char *buffer = malloc(size);
 fread(buffer, 1, size, f);
+ObjectID computed;
+compute_hash(buffer, size, &computed);
+
+/* compare hashes */
+if (memcmp(computed.hash, id->hash, 32) != 0) {
+    free(buffer);
+    return -1;
+}
 fclose(f);
 
 /* find null separator */
