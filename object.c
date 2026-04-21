@@ -119,6 +119,31 @@ memcpy(buffer + header_len + 1, data, len);
 /* TEMP: fake hash (we'll fix next commit) */
 compute_hash(buffer, total_len, id_out);
 
+char path[256];
+object_path(id_out, path);
+
+/* create directory if needed */
+char dir[256];
+strncpy(dir, path, sizeof(dir));
+dir[sizeof(dir)-1] = '\0';
+
+/* remove filename part to get directory */
+char *slash = strrchr(dir, '/');
+if (slash) {
+    *slash = '\0';
+    mkdir(dir, 0755);
+}
+
+/* write file */
+FILE *f = fopen(path, "wb");
+if (!f) {
+    free(buffer);
+    return -1;
+}
+
+fwrite(buffer, 1, total_len, f);
+fclose(f);
+
 /* free buffer */
 free(buffer);
 
