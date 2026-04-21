@@ -174,6 +174,51 @@ return 0;
 // Returns 0 on success, -1 on error (file not found, corrupt, etc.).
 int object_read(const ObjectID *id, ObjectType *type_out, void **data_out, size_t *len_out) {
     // TODO: Implement
-    (void)id; (void)type_out; (void)data_out; (void)len_out;
-    return 0;
+char path[256];
+object_path(id, path, sizeof(path));
+
+/* open file */
+FILE *f = fopen(path, "rb");
+if (!f) return -1;
+
+/* get file size */
+fseek(f, 0, SEEK_END);
+long size = ftell(f);
+rewind(f);
+
+/* read entire file */
+char *buffer = malloc(size);
+fread(buffer, 1, size, f);
+fclose(f);
+
+/* find null separator */
+char *null_pos = memchr(buffer, '\0', size);
+if (!null_pos) {
+    free(buffer);
+    return -1;
+}
+
+/* parse header */
+size_t header_len = null_pos - buffer;
+
+/* determine type */
+if (strncmp(buffer, "blob", 4) == 0)
+    *type_out = OBJ_BLOB;
+else if (strncmp(buffer, "tree", 4) == 0)
+    *type_out = OBJ_TREE;
+else
+    *type_out = OBJ_COMMIT;
+
+/* data starts after null */
+size_t data_len = size - (header_len + 1);
+void *data = malloc(data_len);
+memcpy(data, null_pos + 1, data_len);
+
+/* output */
+*data_out = data;
+*len_out = data_len;
+
+free(buffer);
+return 0;
+
 }
