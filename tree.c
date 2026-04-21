@@ -11,6 +11,7 @@
 
 #include "tree.h"
 #include "pes.h"
+#include "index.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
