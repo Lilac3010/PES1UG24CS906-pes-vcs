@@ -16,6 +16,8 @@
 // TODO functions:     index_load, index_save, index_add
 
 #include "index.h"
+#include "pes.h"   
+#include "tree.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
