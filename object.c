@@ -117,7 +117,7 @@ buffer[header_len] = '\0';
 memcpy(buffer + header_len + 1, data, len);
 
 /* TEMP: fake hash (we'll fix next commit) */
-memset(id_out->hash, 0, 32);
+compute_hash(buffer, total_len, id_out);
 
 /* free buffer */
 free(buffer);
