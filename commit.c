@@ -206,6 +206,7 @@ int commit_create(const char *message, ObjectID *id_out) {
     for (int i = 0; i < 32; i++) {
         sprintf(&tree_hex[i * 2], "%02x", tree_id.hash[i]);
     }
+    tree_hex[64] = '\0';
 
     /* build commit content */
     char buffer[1024];
@@ -216,16 +217,20 @@ int commit_create(const char *message, ObjectID *id_out) {
         return -1;
     }
 
-/* write HEAD */
-FILE *f = fopen(".pes/HEAD", "w");
-if (f) {
+    /* overwrite HEAD with commit hash */
+    FILE *f = fopen(".pes/HEAD", "w");
+    if (!f) {
+        return -1;
+    }
+
     char hex[65];
     for (int i = 0; i < 32; i++) {
         sprintf(&hex[i * 2], "%02x", id_out->hash[i]);
     }
+    hex[64] = '\0';
+
     fprintf(f, "%s\n", hex);
     fclose(f);
-}
 
     return 0;
 }
