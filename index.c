@@ -254,5 +254,10 @@ int index_add(Index *idx, const char *path) {
 
     idx->count++;
 
-    return 0;
+    /* save index */
+    if (index_save(idx) != 0) {
+        return -1;
+    }
+
+return 0;
 }
