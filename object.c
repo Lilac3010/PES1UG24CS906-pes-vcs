@@ -120,7 +120,7 @@ memcpy(buffer + header_len + 1, data, len);
 compute_hash(buffer, total_len, id_out);
 
 char path[256];
-object_path(id_out, path);
+object_path(id_out, path, sizeof(path));
 
 /* create directory if needed */
 char dir[256];
