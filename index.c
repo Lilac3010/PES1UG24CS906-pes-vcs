@@ -137,17 +137,31 @@ int index_status(const Index *index) {
 int index_load(Index *idx) {
     FILE *f = fopen(".pes/index", "r");
 
-    /* if file doesn't exist → empty index */
     if (!f) {
         idx->count = 0;
         return 0;
     }
 
-    /* temp buffer */
     char line[512];
     idx->count = 0;
 
     while (fgets(line, sizeof(line), f)) {
+        IndexEntry *e = &idx->entries[idx->count];
+
+        char hash_hex[65];
+
+        sscanf(line, "%o %64s %ld %zu %s",
+               &e->mode,
+               hash_hex,
+               &e->mtime,
+               &e->size,
+               e->path);
+
+        /* convert hex to binary */
+        for (int i = 0; i < 32; i++) {
+            sscanf(&hash_hex[i * 2], "%2hhx", &e->id.hash[i]);
+        }
+
         idx->count++;
     }
 
